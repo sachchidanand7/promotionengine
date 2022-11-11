@@ -27,8 +27,8 @@ public class DefaultPromotionType implements PromotionType {
         double totalPrice = 0;
         while(index < orderInfoHolder.getTotalNumOfSKU()) {
             byte skuUnitId = orderInfoHolder.getSKUId(index);
-            double quantity = orderInfoHolder.getSKUQuantity(skuUnitId);
-            double price = SKUPriceLoader.getSKUPrice(skuUnitId);
+            int quantity = orderInfoHolder.getSKUQuantity(skuUnitId);
+            double price = SKUPriceLoader.instance().getSKUPrice(skuUnitId);
             ++index;
             totalPrice += quantity * price;
         }

@@ -48,9 +48,6 @@ public class DefaultConfiguration implements Configuration {
 
             doc.getDocumentElement().normalize();
 
-            System.out.println("Root Element :" + doc.getDocumentElement().getNodeName());
-            System.out.println("------");
-
             NodeList list = doc.getElementsByTagName("promotionType");
 
             ArrayList<ConfigEntry> configEntries = new ArrayList();
@@ -154,11 +151,4 @@ public class DefaultConfiguration implements Configuration {
 
         return 0;
     }
-
-    public static void main(String[] args) {
-        DefaultConfiguration defaultConfiguration = new DefaultConfiguration("/home/sachchidanand/work/dev/java/PromotionEngine/apps/src/main/resources/promotion-engine.xml");
-        defaultConfiguration.load();
-    }
-
-
 }

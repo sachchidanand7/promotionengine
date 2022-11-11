@@ -12,6 +12,7 @@ public class OrderInfoHolder {
     private int skuUnitIdIndex = 0;
     private double totalPrice = 0;
     private double totalPriceAfterPrompt = 0;
+    private long orderId;
 
     /**
      * Constructor of OrderInfoHolder.
@@ -105,6 +106,23 @@ public class OrderInfoHolder {
         return itemList[indeId];
     }
 
+
+    /**
+     * Get orderId.
+     * @return
+     */
+    public long getOrderId() {
+        return orderId;
+    }
+
+
+    /**
+     * Set orderId.
+     * @param orderId
+     */
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
 
     /**
      * Get the total number of SKU.

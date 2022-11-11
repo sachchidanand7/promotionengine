@@ -26,7 +26,7 @@ public class TWOBPromotionType implements PromotionType {
     public double execute(OrderInfoHolder orderInfoHolder) {
         int quantity = orderInfoHolder.getSKUQuantity(TWO_B_PROMOTION_TYPE_UNIT_ID) -
                 orderInfoHolder.getPromotedSKUQuantity(TWO_B_PROMOTION_TYPE_UNIT_ID);
-        double eachSKUBlPrice = SKUPriceLoader.getSKUPrice(TWO_B_PROMOTION_TYPE_UNIT_ID);
+        double eachSKUBlPrice = SKUPriceLoader.instance().getSKUPrice(TWO_B_PROMOTION_TYPE_UNIT_ID);
         double totalPrice = quantity * eachSKUBlPrice;
         if (quantity >= 2) {
 

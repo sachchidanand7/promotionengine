@@ -1,6 +1,7 @@
 package com.snp.promotionengine.threadingmodel;
 
 import com.snp.promotionengine.container.OrderInfoHolder;
+import com.snp.promotionengine.pricepublisher.PricePublisher;
 import com.snp.promotionengine.promotiontype.DefaultPromotionType;
 import com.snp.promotionengine.promotiontype.PromotionType;
 import com.snp.promotionengine.promotiontype.PromotionTypeBuilder;
@@ -12,22 +13,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class PromotionEngineThread implements Runnable {
-    private final ConcurrentHashMap<Long, OrderInfoHolder> orderInfoHolderMap;
     private final AtomicBoolean runFlag;
     private final ArrayBlockingQueue<OrderInfoHolder> queue;
     private final PromotionTypeBuilder promotionTypeBuilder;
     private final Thread thread;
     private final DefaultPromotionType defaultPromotionType;
+    private PricePublisher pricePublisher;
 
-    public PromotionEngineThread(ArrayBlockingQueue<OrderInfoHolder> queue, ConcurrentHashMap<Long,
-                                 OrderInfoHolder> orderInfoHolderMap,
+    public PromotionEngineThread(ArrayBlockingQueue<OrderInfoHolder> queue,
                                  PromotionTypeBuilder promotionTypeBuilder) {
         this.queue = queue;
         runFlag = new AtomicBoolean(false);
-        this.orderInfoHolderMap = orderInfoHolderMap;
         this.promotionTypeBuilder = promotionTypeBuilder;
         defaultPromotionType = new DefaultPromotionType();
         thread = new Thread(this);
+    }
+
+    public void register(PricePublisher pricePublisher) {
+        this.pricePublisher = pricePublisher;
     }
 
     public void start() {
@@ -72,6 +75,9 @@ public class PromotionEngineThread implements Runnable {
         }
 
         totalOrderedPrice = totalPrice - discountedPrice;
+        if (pricePublisher != null) {
+            pricePublisher.publishOrderPrice(orderInfoHolder.getOrderId(), totalOrderedPrice);
+        }
         return totalOrderedPrice;
     }
 }

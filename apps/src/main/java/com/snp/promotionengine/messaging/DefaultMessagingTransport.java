@@ -28,48 +28,67 @@ public class DefaultMessagingTransport implements MessagingSyncTransport {
     @Override
     public void pollMessages() {
         ByteBuffer byteBuffer = receiveMessage();
-        for (MessageHandler messageHandler : messageHandlers) {
-            messageHandler.handleMessage(byteBuffer);
+        if (byteBuffer != null) {
+            for (MessageHandler messageHandler : messageHandlers) {
+                messageHandler.handleMessage(byteBuffer);
+            }
+            ++messageCounter;
+            if (messageCounter == 3) {
+                messageCounter = 0;
+            }
         }
     }
 
-
-
-    private ByteBuffer receiveMessage() {
-        return getMessageForScenarioA();
+    @Override
+    public void stop() {
     }
 
 
-//    private ByteBuffer getMessageForScenarioA() {
-//        byteBuffer.clear();
-//        byteBuffer.putInt(3);
-//        byteBuffer.put((byte)'A');
-//        byteBuffer.putInt(1);
-//        byteBuffer.put((byte)'B');
-//        byteBuffer.putInt(1);
-//        byteBuffer.put((byte)'C');
-//        byteBuffer.putInt(1);
-//        byteBuffer.flip();
-//
-//       return byteBuffer;
-//    }
+    private ByteBuffer receiveMessage() {
+        switch (messageCounter) {
+            case 0:
+                return getMessageForScenarioA();
+            case 1:
+                return getMessageForScenarioB();
+            case 2:
+                return getMessageForScenarioC();
+        }
 
+        return null;
 
-//    private ByteBuffer getMessageForScenarioA() {
-//        byteBuffer.clear();
-//        byteBuffer.putInt(3);
-//        byteBuffer.put((byte)'A');
-//        byteBuffer.putInt(5);
-//        byteBuffer.put((byte)'B');
-//        byteBuffer.putInt(5);
-//        byteBuffer.put((byte)'C');
-//        byteBuffer.putInt(1);
-//        byteBuffer.flip();
-//
-//        return byteBuffer;
-//    }
+    }
+
 
     private ByteBuffer getMessageForScenarioA() {
+        byteBuffer.clear();
+        byteBuffer.putInt(3);
+        byteBuffer.put((byte)'A');
+        byteBuffer.putInt(1);
+        byteBuffer.put((byte)'B');
+        byteBuffer.putInt(1);
+        byteBuffer.put((byte)'C');
+        byteBuffer.putInt(1);
+        byteBuffer.flip();
+
+       return byteBuffer;
+    }
+
+
+    private ByteBuffer getMessageForScenarioB() {
+        byteBuffer.clear();
+        byteBuffer.putInt(3);
+        byteBuffer.put((byte)'A');
+        byteBuffer.putInt(5);
+        byteBuffer.put((byte)'B');
+        byteBuffer.putInt(5);
+        byteBuffer.put((byte)'C');
+        byteBuffer.putInt(1);
+        byteBuffer.flip();
+
+        return byteBuffer;
+    }
+
+    private ByteBuffer getMessageForScenarioC() {
         byteBuffer.clear();
         byteBuffer.putInt(4);
         byteBuffer.put((byte)'A');
@@ -85,9 +104,4 @@ public class DefaultMessagingTransport implements MessagingSyncTransport {
         return byteBuffer;
     }
 
-
-    @Override
-    public void stop() {
-
-    }
 }

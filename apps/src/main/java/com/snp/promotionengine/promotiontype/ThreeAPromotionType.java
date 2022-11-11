@@ -27,7 +27,7 @@ public class ThreeAPromotionType implements PromotionType {
 
         int quantity = orderInfoHolder.getSKUQuantity(THREE_A_PROMOTION_TYPE_UNIT_ID) -
                 orderInfoHolder.getPromotedSKUQuantity(THREE_A_PROMOTION_TYPE_UNIT_ID);
-        double eachSKUAlPrice = SKUPriceLoader.getSKUPrice(THREE_A_PROMOTION_TYPE_UNIT_ID);
+        double eachSKUAlPrice = SKUPriceLoader.instance().getSKUPrice(THREE_A_PROMOTION_TYPE_UNIT_ID);
         double totalPrice = quantity * eachSKUAlPrice;
         if (quantity >= 3) {
 

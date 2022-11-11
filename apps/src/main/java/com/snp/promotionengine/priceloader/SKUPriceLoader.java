@@ -11,13 +11,19 @@ public class SKUPriceLoader {
     private static byte SKU_B = 'B';
     private static byte SKU_C = 'C';
     private static byte SKU_D = 'D';
+    private final static SKUPriceLoader skuPriceLoader = new SKUPriceLoader();
 
 
     private static double[] priceHolder;
 
-    public SKUPriceLoader() {
+    private SKUPriceLoader() {
         priceHolder = new double[MAX_SKU_PRICE_BUCKET_SIZE];
         Arrays.fill(priceHolder, 0);
+    }
+
+
+    public static SKUPriceLoader instance() {
+        return skuPriceLoader;
     }
 
     /**
@@ -31,7 +37,7 @@ public class SKUPriceLoader {
         priceHolder[SKU_D] = 15;
     }
 
-    public static double getSKUPrice(byte skuUnitId) {
+    public double getSKUPrice(byte skuUnitId) {
         if (skuUnitId > priceHolder.length || skuUnitId < 0) {
             throw new RuntimeException("Found invalid SKU unit Id");
         }

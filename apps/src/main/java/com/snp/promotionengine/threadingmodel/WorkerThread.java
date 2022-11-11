@@ -11,24 +11,20 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class WorkerThread implements Runnable, MessageHandler {
-    private final ConcurrentHashMap<Long, OrderInfoHolder> orderInfoHolderMap;
     private final AtomicBoolean runFlag;
     private final ArrayBlockingQueue<OrderInfoHolder> queue;
     private final Thread thread;
     private final DefaultMessagingTransport messagingTransport;
 
 
-    public WorkerThread(ArrayBlockingQueue<OrderInfoHolder> queue, ConcurrentHashMap<Long, OrderInfoHolder> orderInfoHolderMap) {
+    public WorkerThread(ArrayBlockingQueue<OrderInfoHolder> queue) {
         this.queue = queue;
         runFlag = new AtomicBoolean(false);
-        this.orderInfoHolderMap = orderInfoHolderMap;
         thread = new Thread(this);
         messagingTransport = new DefaultMessagingTransport();
-
     }
 
     public void start() {
-
         messagingTransport.register(this);
         thread.start();
     }
@@ -61,14 +57,17 @@ public class WorkerThread implements Runnable, MessageHandler {
         messagingTransport.pollMessages();
     }
 
+    /**
+     * Handle received message from transport.
+     * @param byteBuffer
+     */
     @Override
     public void handleMessage(ByteBuffer byteBuffer) {
-
-
         int totalNumberOfItems = byteBuffer.getInt();
         int index = 0;
         long orderId = OrderIdGenerator.getId();
         OrderInfoHolder orderInfoHolder = new OrderInfoHolder();
+        orderInfoHolder.setOrderId(orderId);
         while(index < totalNumberOfItems) {
             byte skuId = byteBuffer.get();
             int quantity = byteBuffer.getInt();
@@ -77,7 +76,6 @@ public class WorkerThread implements Runnable, MessageHandler {
             ++index;
 
         }
-        orderInfoHolderMap.put(OrderIdGenerator.getId(), orderInfoHolder);
 
         boolean isOrderEnqued = false;
         while (!isOrderEnqued) {

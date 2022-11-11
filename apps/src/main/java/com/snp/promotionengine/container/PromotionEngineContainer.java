@@ -3,6 +3,7 @@ package com.snp.promotionengine.container;
 import com.snp.common.config.Configuration;
 import com.snp.common.config.DefaultConfiguration;
 import com.snp.promotionengine.priceloader.SKUPriceLoader;
+import com.snp.promotionengine.pricepublisher.PricePublisher;
 import com.snp.promotionengine.promotiontype.PromotionParameters;
 import com.snp.promotionengine.promotiontype.PromotionType;
 import com.snp.promotionengine.promotiontype.PromotionTypeBuilder;
@@ -16,27 +17,27 @@ public class PromotionEngineContainer implements Container {
     private static int MAX_QUEUE_SIZE = 4096;
     private static int NUM_OF_WORKER_THREAD = 1;
 
-    //NOTE : - It will be better to use persistent LVCache instead of concurrentHashmap.
-    private final ConcurrentHashMap<Long, OrderInfoHolder> orderInfoTable;
     private final ArrayBlockingQueue<OrderInfoHolder> queue;
     private final Configuration configuration;
     private final WorkerThread[] workerThreads;
     private final PromotionEngineThread promotionEngineThread;
     private final PromotionTypeBuilder promotionTypeBuilder;
-    private final SKUPriceLoader skuPriceLoader;
 
     public PromotionEngineContainer(String path) {
         configuration = new DefaultConfiguration(path);
-        orderInfoTable = new ConcurrentHashMap();
         queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
         workerThreads = new WorkerThread[NUM_OF_WORKER_THREAD];
         for(int i = 0; i < NUM_OF_WORKER_THREAD; i++) {
-            workerThreads[i] = new WorkerThread(queue, orderInfoTable);
+            workerThreads[i] = new WorkerThread(queue);
         }
         promotionTypeBuilder = new PromotionTypeBuilder();
-        promotionEngineThread = new PromotionEngineThread(queue, orderInfoTable, promotionTypeBuilder);
-        skuPriceLoader = new SKUPriceLoader();
+        promotionEngineThread = new PromotionEngineThread(queue, promotionTypeBuilder);
 
+    }
+
+
+    public void register(PricePublisher pricePublisher) {
+        promotionEngineThread.register(pricePublisher);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class PromotionEngineContainer implements Container {
 
         configuration.load();
 
-        skuPriceLoader.loadSKUPrice(configuration);
+        SKUPriceLoader.instance().loadSKUPrice(configuration);
 
         int totalNumOfEntries = configuration.getTotalEntriesOfRepeatedNodes("promotionType");
         int index = 0;

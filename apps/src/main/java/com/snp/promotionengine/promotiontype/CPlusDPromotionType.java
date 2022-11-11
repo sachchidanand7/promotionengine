@@ -33,8 +33,8 @@ public class CPlusDPromotionType implements PromotionType {
         int quantity = Math.min(quantityOfC, quantityOfD);
 
         if (quantity >= 1) {
-            double eachSKUBlPriceOf_C = SKUPriceLoader.getSKUPrice(SKU_UNIT_C);
-            double eachSKUBlPriceOf_D = SKUPriceLoader.getSKUPrice(SKU_UNIT_D);
+            double eachSKUBlPriceOf_C = SKUPriceLoader.instance().getSKUPrice(SKU_UNIT_C);
+            double eachSKUBlPriceOf_D = SKUPriceLoader.instance().getSKUPrice(SKU_UNIT_D);
             double totalPrice = quantityOfC * eachSKUBlPriceOf_C + quantityOfD * eachSKUBlPriceOf_D;
             orderInfoHolder.addPromotedSKUQuantity(SKU_UNIT_C, quantity);
             orderInfoHolder.addPromotedSKUQuantity(SKU_UNIT_D, quantity);
