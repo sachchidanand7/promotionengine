@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<root>
+
+    <promotionType name="3A" className="com.snp.promotionengine.promotiontype.ThreeAPromotionType">
+        <price>50</price>
+        <strategyPrice>130</strategyPrice>
+    </promotionType>
+    <promotionType name="2B" className="com.snp.promotionengine.promotiontype.TWOBPromotionType">
+        <price>30</price>
+        <strategyPrice>45</strategyPrice>
+    </promotionType>
+    <promotionType name="CPlusD" className="com.snp.promotionengine.promotiontype.CPlusDPromotionType">
+        <strategyPrice>30</strategyPrice>
+    </promotionType>
+
+</root>
