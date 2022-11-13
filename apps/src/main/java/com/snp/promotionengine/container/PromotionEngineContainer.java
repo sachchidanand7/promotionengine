@@ -23,6 +23,10 @@ public class PromotionEngineContainer implements Container {
     private final PromotionEngineThread promotionEngineThread;
     private final PromotionTypeBuilder promotionTypeBuilder;
 
+    /**
+     * Constructor of Promotion engine container class.
+     * @param path
+     */
     public PromotionEngineContainer(String path) {
         configuration = new DefaultConfiguration(path);
         queue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
@@ -35,24 +39,35 @@ public class PromotionEngineContainer implements Container {
 
     }
 
-
+    /**
+     *
+     * @param pricePublisher
+     */
     public void register(PricePublisher pricePublisher) {
         promotionEngineThread.register(pricePublisher);
     }
 
+    /**
+     * Load configuration file and build all promotion type class.
+     */
     @Override
     public void loader() {
 
+        // Load configuration.
         configuration.load();
 
+        // Load price for each SKU.
         SKUPriceLoader.instance().loadSKUPrice(configuration);
 
+        // Load each promotion type by looping through entry in configuration.
         int totalNumOfEntries = configuration.getTotalEntriesOfRepeatedNodes("promotionType");
         int index = 0;
         while (index < totalNumOfEntries) {
-            String promotionTypeName = configuration.getAttributeFromRepeatedNodes("promotionType", "name", index);
-            String promotionTypeClassName = configuration.getAttributeFromRepeatedNodes("promotionType", "className", index);
+
             try {
+                String promotionTypeName = configuration.getAttributeFromRepeatedNodes("promotionType", "name", index);
+                String promotionTypeClassName = configuration.getAttributeFromRepeatedNodes("promotionType", "className", index);
+
                 Class promotionTypeClass = Class.forName(promotionTypeClassName);
                 PromotionType promotionType = (PromotionType) promotionTypeClass.newInstance();
                 String price = configuration.getValueFromRepeatedNodes("promotionType", "price", index);
@@ -64,12 +79,16 @@ public class PromotionEngineContainer implements Container {
                 promotionTypeBuilder.add(promotionType);
             } catch (Exception e) {
                 e.printStackTrace();
+                throw new RuntimeException("Loading of configuration is failed");
             }
 
             ++index;
         }
     }
 
+    /**
+     * Start all threads.
+     */
     @Override
     public void start() {
 
@@ -80,13 +99,16 @@ public class PromotionEngineContainer implements Container {
         }
     }
 
+    /**
+     * Stop all the threads.
+     */
     @Override
     public void stop() {
-
-        promotionEngineThread.stop();
 
         for(int i = 0; i < NUM_OF_WORKER_THREAD; i++) {
             workerThreads[i].stop();
         }
+
+        promotionEngineThread.stop();
     }
 }

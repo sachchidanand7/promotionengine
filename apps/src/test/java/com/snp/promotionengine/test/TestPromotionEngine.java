@@ -15,7 +15,6 @@ public class TestPromotionEngine {
 
     private  PromotionEngineThreadTest promotionEngineThreadTest;
     private static int MAX_CAPACITY = 1024;
-    private ByteBuffer byteBuffer;
 
     @Before
     public void setup() throws Exception {
@@ -38,7 +37,6 @@ public class TestPromotionEngine {
 
 
         promotionEngineThreadTest = new PromotionEngineThreadTest(null, null, promotionTypeBuilder);
-        byteBuffer = ByteBuffer.allocate(MAX_CAPACITY);
     }
 
     @Test
@@ -70,5 +68,16 @@ public class TestPromotionEngine {
         orderInfoHolder.addSKUQuantity((byte)'D', 1);
         double result = promotionEngineThreadTest.processOrder(orderInfoHolder);
         Assert.assertTrue(result == 280);
+    }
+
+    @Test
+    public void testScenarioD() {
+        OrderInfoHolder orderInfoHolder = new OrderInfoHolder();
+        orderInfoHolder.addSKUQuantity((byte)'A', 5);
+        orderInfoHolder.addSKUQuantity((byte)'B', 5);
+        orderInfoHolder.addSKUQuantity((byte)'C', 5);
+        orderInfoHolder.addSKUQuantity((byte)'D', 3);
+        double result = promotionEngineThreadTest.processOrder(orderInfoHolder);
+        Assert.assertTrue(result == 480);
     }
 }

@@ -132,18 +132,34 @@ public class OrderInfoHolder {
         return skuUnitIdIndex;
     }
 
+    /**
+     * Get the total price.
+     * @return
+     */
     public double getTotalPrice() {
         return totalPrice;
     }
 
+    /**
+     * Set the total price.
+     * @param totalPrice
+     */
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
+    /**
+     * Get total price after applying promotion.
+     * @return
+     */
     public double getTotalPriceAfterPrompt() {
         return totalPriceAfterPrompt;
     }
 
+    /**
+     * Set total price after applying promotion.
+     * @param totalPriceAfterPrompt
+     */
     public void setTotalPriceAfterPrompt(double totalPriceAfterPrompt) {
         this.totalPriceAfterPrompt = totalPriceAfterPrompt;
     }

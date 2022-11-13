@@ -63,18 +63,19 @@ public class WorkerThread implements Runnable, MessageHandler {
      */
     @Override
     public void handleMessage(ByteBuffer byteBuffer) {
+
+        // Get total number of SKU items.
         int totalNumberOfItems = byteBuffer.getInt();
         int index = 0;
         long orderId = OrderIdGenerator.getId();
+        // ****Creating here garbage, we should use Object pool over here.
         OrderInfoHolder orderInfoHolder = new OrderInfoHolder();
         orderInfoHolder.setOrderId(orderId);
         while(index < totalNumberOfItems) {
             byte skuId = byteBuffer.get();
             int quantity = byteBuffer.getInt();
-            // ****Creating here garbage, we should use Object pool over here.
             orderInfoHolder.addSKUQuantity(skuId, quantity);
             ++index;
-
         }
 
         boolean isOrderEnqued = false;
